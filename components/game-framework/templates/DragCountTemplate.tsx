@@ -15,19 +15,11 @@ export default function DragCountTemplate({ question, onAnswer }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [firstTry, setFirstTry] = useState(true);
   const [shake, setShake] = useState(false);
-  const [justAdded, setJustAdded] = useState(false);
 
-  useEffect(() => {
-    setInBasket(0); setSubmitted(false); setFirstTry(true); setShake(false); setJustAdded(false);
-  }, [question.id]);
+  useEffect(() => { setInBasket(0); setSubmitted(false); setFirstTry(true); setShake(false); }, [question.id]);
 
   const add = useCallback(() => {
-    if (inBasket < poolSize && !submitted) {
-      playClick();
-      setInBasket(n => n + 1);
-      setJustAdded(true);
-      setTimeout(() => setJustAdded(false), 400);
-    }
+    if (inBasket < poolSize && !submitted) { playClick(); setInBasket(n => n + 1); }
   }, [inBasket, poolSize, submitted]);
 
   const remove = useCallback(() => {
@@ -45,100 +37,95 @@ export default function DragCountTemplate({ question, onAnswer }: Props) {
       playRetry();
       setShake(true);
       setFirstTry(false);
-      setTimeout(() => { setInBasket(0); setSubmitted(false); setShake(false); }, 950);
+      setTimeout(() => { setInBasket(0); setSubmitted(false); setShake(false); }, 1000);
     }
   }, [inBasket, targetCount, submitted, firstTry, onAnswer]);
 
   const poolRemaining = poolSize - inBasket;
-  const isReady = inBasket === targetCount;
+  const isRight = inBasket === targetCount;
 
   return (
     <div className="flex flex-col items-center gap-5 w-full max-w-sm mx-auto pt-2">
 
-      {/* Target — how many Bobo wants */}
+      {/* Target — large and clear */}
       <motion.div
-        className="bg-amber-50 rounded-3xl p-5 w-full text-center border-3 border-amber-200 shadow-lg"
-        animate={{ scale: [1, 1.03, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+        initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5 }}
+        className="bg-white rounded-3xl p-5 w-full text-center shadow-xl border-4 border-amber-200">
         <p className="text-base font-black text-amber-700 mb-1">{question.prompt.en}</p>
-        <p className="text-7xl font-black text-amber-500 leading-none">{targetCount}</p>
+        <motion.span className="text-8xl font-black text-amber-500 block"
+          animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+          {targetCount}
+        </motion.span>
         <p className="text-3xl mt-1">{itemEmoji}</p>
       </motion.div>
 
-      {/* Basket — shows what child has added */}
+      {/* Basket */}
       <motion.div
-        className={`bg-white rounded-3xl p-4 w-full shadow-xl border-4 ${isReady ? "border-green-400" : "border-gray-100"} transition-all`}
-        animate={shake ? { x: [-8, 8, -8, 8, 0] } : {}}
-        transition={{ duration: 0.5 }}>
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-3xl">{basketEmoji}</span>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-black text-gray-700">{inBasket}</span>
-            <span className="text-gray-400 font-bold">/</span>
-            <span className="text-2xl font-black text-amber-500">{targetCount}</span>
-          </div>
-        </div>
+        animate={shake ? { x: [-8,8,-8,8,0] } : { scale: isRight ? [1,1.05,1] : 1 }}
+        transition={{ duration: 0.5 }}
+        className={`relative bg-white rounded-3xl p-4 w-full shadow-xl border-4 min-h-[120px] flex flex-col items-center justify-center
+          ${isRight ? "border-green-400" : shake ? "border-orange-400" : "border-amber-200"}`}>
+        <p className="text-4xl mb-2">{basketEmoji}</p>
         {/* Items in basket */}
-        <div className="flex flex-wrap gap-2 justify-center min-h-[60px] items-center">
+        <div className="flex flex-wrap justify-center gap-1 min-h-[40px]">
           <AnimatePresence>
             {Array.from({ length: inBasket }).map((_, i) => (
-              <motion.span key={i} className="text-4xl"
-                initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0 }} transition={{ type: "spring", bounce: 0.6 }}>
+              <motion.span key={i} className="text-3xl"
+                initial={{ scale: 0, y: -20 }} animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0 }}
+                transition={{ type: "spring", bounce: 0.6, delay: 0 }}>
                 {itemEmoji}
               </motion.span>
             ))}
           </AnimatePresence>
-          {inBasket === 0 && (
-            <p className="text-gray-300 text-sm font-bold">tap {itemEmoji} to add!</p>
-          )}
         </div>
-        {/* Remove button */}
-        {inBasket > 0 && !submitted && (
-          <button onClick={remove}
-            className="mt-2 w-full text-xs font-black text-gray-400 py-1 hover:text-red-400 transition">
-            ← take one out
-          </button>
-        )}
+        {/* Counter badge */}
+        <motion.div
+          animate={isRight ? { scale: [1,1.2,1], backgroundColor: ["#FFF7ED","#DCFCE7"] } : {}}
+          className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-amber-100 border-2 border-amber-300 flex items-center justify-center font-black text-lg text-amber-700 shadow-md">
+          {inBasket}
+        </motion.div>
       </motion.div>
 
-      {/* Pool of items to tap */}
-      <div className="bg-white/70 rounded-3xl p-4 w-full shadow-md border-2 border-gray-100">
-        <p className="text-center text-sm text-gray-400 mb-3 font-bold">
-          {poolRemaining > 0 ? `Tap to add ${itemEmoji}` : "All picked up!"}
-        </p>
-        <div className="flex flex-wrap gap-3 justify-center min-h-[72px] items-center">
-          {Array.from({ length: poolRemaining }).map((_, i) => (
-            <motion.button key={`pool-${i}`} onClick={add}
-              whileTap={{ scale: 0.7 }}
-              animate={i === 0 && poolRemaining > 0 ? { scale: [1, 1.12, 1] } : {}}
-              transition={i === 0 ? { duration: 1.5, repeat: Infinity } : {}}
-              className="text-5xl p-3 rounded-2xl active:bg-amber-100 transition-colors focus:outline-none"
-              aria-label={`Add ${itemEmoji}`}>
-              {itemEmoji}
-            </motion.button>
-          ))}
+      {/* Controls */}
+      <div className="flex items-center gap-4 w-full">
+        <motion.button whileTap={{ scale: 0.88 }} onClick={remove} disabled={inBasket === 0 || submitted}
+          className="w-14 h-14 rounded-2xl bg-white border-3 border-gray-200 shadow-lg text-2xl font-black text-gray-500 disabled:opacity-30 flex-shrink-0">
+          −
+        </motion.button>
+
+        {/* Pool of tappable items — big tap targets */}
+        <div className="flex-1 bg-white/80 rounded-2xl p-3 shadow-inner border-2 border-gray-100 min-h-[72px] flex flex-wrap gap-2 justify-center items-center">
+          <AnimatePresence>
+            {Array.from({ length: poolRemaining }).map((_, i) => (
+              <motion.button key={`pool-${i}`} onClick={add} whileTap={{ scale: 0.75 }}
+                initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
+                className="text-4xl p-2.5 focus:outline-none rounded-2xl active:bg-amber-100 transition"
+                aria-label={`Add ${itemEmoji}`}>
+                {itemEmoji}
+              </motion.button>
+            ))}
+          </AnimatePresence>
+          {poolRemaining === 0 && <span className="text-gray-300 font-bold text-sm">Pool empty</span>}
         </div>
+
+        <motion.button whileTap={{ scale: 0.88 }} onClick={add} disabled={inBasket >= poolSize || submitted}
+          className="w-14 h-14 rounded-2xl bg-amber-400 border-3 border-amber-300 shadow-lg text-2xl font-black text-white disabled:opacity-30 flex-shrink-0">
+          +
+        </motion.button>
       </div>
 
-      {/* Submit button — only when something is in basket */}
-      <AnimatePresence>
-        {inBasket > 0 && !submitted && (
-          <motion.button
-            initial={{ opacity: 0, y: 16, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8 }}
-            onClick={submit}
-            className={`w-full py-5 rounded-full font-black text-2xl shadow-xl border-4 border-white/50 transition-all ${
-              isReady
-                ? "bg-gradient-to-r from-green-400 to-emerald-500 text-white"
-                : "bg-gradient-to-r from-amber-400 to-orange-400 text-white"
-            }`}
-            style={{ boxShadow: isReady ? "0 8px 28px rgba(6,214,160,0.5)" : "0 8px 28px rgba(255,140,0,0.35)" }}
-            whileTap={{ scale: 0.95 }}>
-            {isReady ? "✅ Give to Bobo!" : `Bobo wants ${targetCount}... (${inBasket} so far)`}
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {/* Submit */}
+      <motion.button
+        onClick={submit}
+        disabled={inBasket === 0 || submitted}
+        whileTap={{ scale: 0.93 }}
+        animate={isRight ? { scale: [1,1.04,1] } : {}}
+        transition={{ duration: 1.5, repeat: Infinity }}
+        className={`w-full py-4 rounded-2xl font-black text-xl text-white shadow-xl border-4 border-white/50 transition-all
+          ${inBasket === 0 || submitted ? "bg-gray-300 opacity-50" : isRight ? "bg-green-500" : "bg-teal-500"}`}>
+        {isRight ? "✅ That's " + targetCount + "! Give Bobo!" : "Give to Bobo! " + basketEmoji}
+      </motion.button>
     </div>
   );
 }
