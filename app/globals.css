@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+
+:root {
+  --bobo-teal:   #3DBFBF;
+  --bobo-yellow: #F5C842;
+  --bobo-star:   #F0B429;
+  --bobo-green:  #06D6A0;
+  --bobo-pink:   #EF476F;
+  --bobo-purple: #7B2FBE;
+}
+
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', 'Comic Sans MS', 'Chalkboard SE', cursive;
+  background: #FFF9F0;
+  overscroll-behavior: none;
+}
+
+/* Big bouncy letter styles */
+.letter-display {
+  font-size: clamp(4rem, 20vw, 9rem);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+  display: inline-block;
+}
+
+.letter-rainbow-A { color: #FF4757; }
+.letter-rainbow-B { color: #FF6B35; }
+.letter-rainbow-C { color: #FFA502; }
+.letter-rainbow-D { color: #2ED573; }
+.letter-rainbow-E { color: #1E90FF; }
+.letter-rainbow-F { color: #7B2FBE; }
+.letter-rainbow-G { color: #FF4757; }
+.letter-rainbow-H { color: #FF6348; }
+.letter-rainbow-I { color: #3742FA; }
+.letter-rainbow-J { color: #2ED573; }
+.letter-rainbow-K { color: #FFA502; }
+.letter-rainbow-L { color: #FF4757; }
+.letter-rainbow-M { color: #7B2FBE; }
+.letter-rainbow-N { color: #1E90FF; }
+.letter-rainbow-O { color: #FF6348; }
+.letter-rainbow-P { color: #2ED573; }
+.letter-rainbow-Q { color: #FF4757; }
+.letter-rainbow-R { color: #FFA502; }
+.letter-rainbow-S { color: #7B2FBE; }
+.letter-rainbow-T { color: #1E90FF; }
+.letter-rainbow-U { color: #FF4757; }
+.letter-rainbow-V { color: #2ED573; }
+.letter-rainbow-W { color: #FFA502; }
+.letter-rainbow-X { color: #FF6348; }
+.letter-rainbow-Y { color: #7B2FBE; }
+.letter-rainbow-Z { color: #1E90FF; }
+
+/* Number styles */
+.number-display {
+  font-size: clamp(4rem, 18vw, 8rem);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 4px 4px 0px rgba(0,0,0,0.12);
+}
+
+/* Option button bounce */
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.option-pop { animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* Star sparkle */
+@keyframes starSpin {
+  0% { transform: rotate(0deg) scale(0); opacity: 0; }
+  50% { transform: rotate(180deg) scale(1.3); opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+.star-spin { animation: starSpin 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* Wiggle for wrong answer */
+@keyframes wiggle {
+  0%,100% { transform: rotate(0deg); }
+  20% { transform: rotate(-10deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(8deg); }
+}
+.wiggle { animation: wiggle 0.5s ease-in-out; }
+
+/* Floating confetti */
+@keyframes float {
+  0%,100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(10deg); }
+}
+.float-anim { animation: float 3s ease-in-out infinite; }
+
+/* Pulse for correct */
+@keyframes correctPulse {
+  0% { box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.7); }
+  70% { box-shadow: 0 0 0 20px rgba(6, 214, 160, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(6, 214, 160, 0); }
+}
+.correct-pulse { animation: correctPulse 0.6s ease-out; }
+
+/* Rainbow text */
+@keyframes rainbow {
+  0% { color: #FF4757; }
+  16% { color: #FF6B35; }
+  33% { color: #FFA502; }
+  50% { color: #2ED573; }
+  66% { color: #1E90FF; }
+  83% { color: #7B2FBE; }
+  100% { color: #FF4757; }
+}
+.rainbow-text { animation: rainbow 2s linear infinite; }
+
+/* Bubble background pattern */
+.bubble-bg {
+  background-color: #FFF5E6;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,209,102,0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(6,214,160,0.2) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(239,71,111,0.1) 0%, transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
