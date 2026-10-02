@@ -26,20 +26,20 @@ const CATEGORIES = [
 
 // Card colour per pillar — light pastel backgrounds like LearnWorld
 const CARD_BG: Record<string, string> = {
-  literacy:      "bg-amber-50",
-  math:          "bg-sky-50",
-  colors_shapes: "bg-pink-50",
-  logic:         "bg-violet-50",
-  life_skills:   "bg-green-50",
-  world:         "bg-teal-50",
+  literacy:      "#FFFBEB",
+  math:          "#F0F9FF",
+  colors_shapes: "#FFF0F3",
+  logic:         "#F5F3FF",
+  life_skills:   "#F0FDF4",
+  world:         "#F0FDFA",
 };
-const SUBJECT_PILL: Record<string, string> = {
-  literacy:      "bg-amber-400 text-white",
-  math:          "bg-sky-500 text-white",
-  colors_shapes: "bg-pink-500 text-white",
-  logic:         "bg-violet-500 text-white",
-  life_skills:   "bg-green-500 text-white",
-  world:         "bg-teal-500 text-white",
+const SUBJECT_PILL_COLOR: Record<string, string> = {
+  literacy:      "#F59E0B",
+  math:          "#0EA5E9",
+  colors_shapes: "#EC4899",
+  logic:         "#8B5CF6",
+  life_skills:   "#22C55E",
+  world:         "#14B8A6",
 };
 const SUBJECT_LABEL: Record<string, string> = {
   literacy:"Letters", math:"Numbers", colors_shapes:"Colours",
@@ -214,7 +214,8 @@ export default function HomePage() {
                   return (
                     <div key={i} className="flex flex-col items-center gap-1">
                       <motion.div
-                        className={`w-12 h-12 rounded-2xl border-3 border-white/60 flex items-center justify-center text-2xl font-black shadow ${done ? "bg-white" : "bg-white/25"}`}
+                        className={`w-12 h-12 rounded-2xl border-2 border-white/60 flex items-center justify-center font-black shadow ${done ? "bg-white" : "bg-white/25"}`}
+                        style={{ fontSize: "1.5rem" }}
                         animate={done ? { scale:[1,1.15,1] } : {}}
                         transition={{ duration:0.6, repeat:done?Infinity:0, repeatDelay:2 }}>
                         {done ? "⭐" : (GAME_ICON[slug] ?? "🎮")}
@@ -259,15 +260,14 @@ export default function HomePage() {
         </div>
 
         {/* Game grid — 5 columns on desktop like LearnWorld, 2 on mobile */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}>
           <AnimatePresence mode="popLayout">
             {filteredGames.map((game, i) => {
               const icon = GAME_ICON[game.slug] ?? "🎮";
               const isDone = completedSlugs.includes(game.slug);
               const isAdventure = adventureSlugs.includes(game.slug);
               const status = statuses[game.skill] ?? "not-started";
-              const cardBg = CARD_BG[game.pillar] ?? "bg-gray-50";
-              const subjectPill = SUBJECT_PILL[game.pillar] ?? "bg-gray-400 text-white";
+              const cardBg = CARD_BG[game.pillar] ?? "#F9FAFB";
 
               return (
                 <motion.button key={game.slug}
@@ -282,9 +282,9 @@ export default function HomePage() {
                   style={{ boxShadow:"0 4px 20px rgba(0,0,0,0.08)" }}>
 
                   {/* Image area — light coloured bg with large emoji */}
-                  <div className={`${cardBg} flex items-center justify-center py-6 relative`}>
-                    <motion.span className="text-7xl select-none"
-                      animate={{ y:[0,-5,0] }}
+                  <div className="flex items-center justify-center py-8 relative" style={{ background: cardBg }}>
+                    <motion.span className="select-none" style={{ fontSize: "4.5rem", lineHeight: 1 }}
+                      animate={{ y:[0,-6,0] }}
                       transition={{ duration:2.5+i*0.2, repeat:Infinity, ease:"easeInOut", delay:i*0.15 }}>
                       {icon}
                     </motion.span>
@@ -308,7 +308,8 @@ export default function HomePage() {
                   <div className="p-3 flex flex-col gap-2 flex-1">
                     <h3 className="font-black text-gray-900 text-sm leading-tight">{game.title}</h3>
                     {/* Subject pill */}
-                    <span className={`inline-block self-start rounded-full px-2 py-0.5 text-xs font-black ${subjectPill}`}>
+                    <span className="inline-block self-start rounded-full px-2 py-0.5 text-xs font-black text-white"
+                      style={{ background: SUBJECT_PILL_COLOR[game.pillar] ?? "#6B7280" }}>
                       {SUBJECT_LABEL[game.pillar]}
                     </span>
                     {/* Learning objective */}
